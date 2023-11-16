@@ -22,7 +22,7 @@ var conn = mysql.createConnection({
   database: process.env.DATABASE,
 });
 
-  
+
 
 const addProduct = (req, res) => {
     
