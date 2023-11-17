@@ -20,10 +20,12 @@ var conn = mysql.createConnection({
   database: DATABASE,
 });
 
-const addAdressToUser = async (req, res) => {
+
+
+const addAddressToUser = async (req, res) => {
   try {
     const email = await verifyUserTokenWithEmailReturn(req, res);
-    
+
     const {
       firstName,
       lastName,
@@ -33,8 +35,15 @@ const addAdressToUser = async (req, res) => {
       houseNr,
       mobile,
     } = req.body;
+
+    
+    if (!email || !firstName || !lastName || !addressStreet || !addressCity || !addressZip || !houseNr || !mobile) {
+      return res.status(400).json({ message: "Please provide all required fields." });
+    }
+
     const sql_query =
       "INSERT INTO adress (email, firstName, lastName, addressStreet, addressCity, addressZip, houseNr, mobile) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
     conn.query(
       sql_query,
       [
@@ -48,14 +57,29 @@ const addAdressToUser = async (req, res) => {
         mobile,
       ],
       (error) => {
-            if (error) return res.status(500).json({ message: error.message });
-            res.json({ message: `Address of user: ${email} added successfully` });
+        if (error) {
+          return res.status(500).json({ message: error.message });
+        }
+
+        return res.status(201).json({
+          message: `Address of user: ${email} added successfully`,
+          address: {
+            firstName,
+            lastName,
+            addressStreet,
+            addressCity,
+            addressZip,
+            houseNr,
+            mobile,
+          },
+        });
       }
     );
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 
-module.exports = addAdressToUser;
+
+module.exports = addAddressToUser;

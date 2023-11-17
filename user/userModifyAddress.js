@@ -4,7 +4,6 @@ dotenv.config();
 
 const { error } = require("console");
 
-
 const HOST = process.env.HOST;
 const U = process.env.U;
 const PASSWORD = process.env.PASSWORD;
@@ -23,55 +22,71 @@ const updateAddressOfUser = async (req, res) => {
   try {
     const email = await verifyUserTokenWithEmailReturn(req, res);
 
-    const updates = req.body; // Object containing fields to update and their new values
+    // Check if the user's address exists
+    const addressCheckQuery = "SELECT * FROM adress WHERE email = ?";
+    conn.query(addressCheckQuery, [email], (addressError, addressResult) => {
+      if (addressError) {
+        return res.status(500).json({ message: addressError.message });
+      }
 
-    if (Object.keys(updates).length === 0) {
-      return res.status(400).json({ message: "No fields to update provided" });
-    }
+      if (addressResult.length === 0) {
+        return res.status(404).json({ message: "User address not found" });
+      }
 
-    const allowedFields = [
-      "firstName",
-      "lastName",
-      "addressStreet",
-      "addressCity",
-      "addressZip",
-      "houseNr",
-      "mobile"
-    ];
+      const updates = req.body; // Object containing fields to update and their new values
 
-    const invalidFields = Object.keys(updates).filter(
-      (field) => !allowedFields.includes(field)
-    );
+      if (Object.keys(updates).length === 0) {
+        return res
+          .status(400)
+          .json({ message: "No fields to update provided" });
+      }
 
-    if (invalidFields.length > 0) {
-      return res
-        .status(400)
-        .json({
+      const allowedFields = [
+        "firstName",
+        "lastName",
+        "addressStreet",
+        "addressCity",
+        "addressZip",
+        "houseNr",
+        "mobile",
+      ];
+
+      const invalidFields = Object.keys(updates).filter(
+        (field) => !allowedFields.includes(field)
+      );
+
+      if (invalidFields.length > 0) {
+        return res.status(400).json({
           message: `Invalid field(s) to update: ${invalidFields.join(", ")}`,
         });
-    }
-
-    let sql_query = "UPDATE adress SET ";
-    const params = [];
-    const fields = Object.keys(updates);
-
-    fields.forEach((field, index) => {
-      sql_query += `${field}=?`;
-      params.push(updates[field]);
-      if (index !== fields.length - 1) {
-        sql_query += ", ";
       }
-    });
 
-    sql_query += " WHERE email=?";
-    params.push(email);
+      let sql_query = "UPDATE adress SET ";
+      const params = [];
+      const fields = Object.keys(updates);
 
-    conn.query(sql_query, params, (error) => {
-      if (error) return res.status(500).json({ message: error.message });
-      res.json({ message: `Address of user: ${email} updated successfully` });
+      fields.forEach((field, index) => {
+        sql_query += `${field}=?`;
+        params.push(updates[field]);
+        if (index !== fields.length - 1) {
+          sql_query += ", ";
+        }
+      });
+
+      sql_query += " WHERE email=?";
+      params.push(email);
+
+      conn.query(sql_query, params, (error) => {
+        if (error) {
+          return res.status(500).json({ message: error.message });
+        }
+        return res.json({
+          message: `Address of user: ${email} updated successfully`,
+        });
+      });
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 

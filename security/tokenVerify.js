@@ -7,7 +7,6 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 dotenv.config();
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -100,7 +99,6 @@ const verifyAdminToken = (req, res, next) => {
     adminAccessToken,
     ADMIN_ACCESS_TOKEN_SECRET,
     (err, accessDecodedAdminUsername) => {
-      
       if (!accessDecodedAdminUsername) {
         jwt.verify(
           adminRefreshToken,
@@ -109,7 +107,7 @@ const verifyAdminToken = (req, res, next) => {
             if (!refreshDecodedAdminUsername)
               return res.status(401).json({ message: "Unauthorized" });
             if (err) return res.status(403).json({ message: "Forbidden" });
-            
+
             if (
               refreshDecodedAdminUsername.username === ADMIN_UNIQUE_USERNAME
             ) {
@@ -182,7 +180,10 @@ const verifyUserTokenWithEmailReturn = (req, res) => {
                 return;
               }
 
-              if (emailCheckResult.length === 0 || emailCheckResult.length > 1) {
+              if (
+                emailCheckResult.length === 0 ||
+                emailCheckResult.length > 1
+              ) {
                 reject({ message: "email is not valid" });
                 return;
               }
@@ -222,5 +223,6 @@ const verifyUserTokenWithEmailReturn = (req, res) => {
 
 module.exports = {
   verifyUserToken,
-  verifyAdminToken,verifyUserTokenWithEmailReturn
+  verifyAdminToken,
+  verifyUserTokenWithEmailReturn,
 };

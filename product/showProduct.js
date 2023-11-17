@@ -19,27 +19,32 @@ var conn = mysql.createConnection({
   database: process.env.DATABASE,
 });
 
-
-
-
-
 const data = (req, res) => {
-    const { sex, category } = req.body();
-    if (!sex || !category) {
-        res.status(400).json({ message: "sex and category must enter" });
+  const { sex, category } = req.body;
+
+  if (!sex || !category) {
+    return res
+      .status(400)
+      .json({ message: "Both sex and category must be provided" });
+  }
+
+  const search_query = "SELECT * FROM products WHERE sex = ? AND category = ?";
+
+  conn.query(search_query, [sex, category], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: err.message });
     }
-    const search_query = "SELECT * FROM products WHERE (sex, category) VALUES (?, ?)";
-    conn.query(search_query, [sex, category], (err, results) => {
-        if (err) {
-            res
-              .status(500)
-              .json({ message: err.message });
-        }
-        if (!results) {
-            res.status(400).json({ message: "there is no product with these sex and category" });
-        }
-        res.json({ products: results });
-    })
-}
+
+    if (results.length === 0) {
+      return res
+        .status(404)
+        .json({
+          message: "No products found with the provided sex and category",
+        });
+    }
+
+    return res.json({ products: results });
+  });
+};
 
 module.exports = data;

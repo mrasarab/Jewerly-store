@@ -1,4 +1,3 @@
-
 const jwt = require("jsonwebtoken");
 
 const dotenv = require("dotenv");
@@ -10,8 +9,6 @@ const ADMIN_REFRESH_TOKEN_SECRET = process.env.ADMIN_REFRESH_TOKEN_SECRET;
 
 const ADMIN_UNIQUE_USERNAME = process.env.ADMIN_UNIQUE_USERNAME;
 const ADMIN_UNIQUE_PASSWORD = process.env.ADMIN_UNIQUE_PASSWORD;
-
-
 
 const CheckAdmin = (req, res) => {
   const { username, password } = req.body;
@@ -26,7 +23,7 @@ const CheckAdmin = (req, res) => {
   ) {
     const payload = { username: username };
     const adminAccessToken = jwt.sign(payload, ADMIN_ACCESS_TOKEN_SECRET, {
-      expiresIn: "1m",
+      expiresIn: "10m",
     });
     const adminRefreshToken = jwt.sign(payload, ADMIN_REFRESH_TOKEN_SECRET, {
       expiresIn: "2h",

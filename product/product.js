@@ -24,16 +24,20 @@ var conn = mysql.createConnection({
 
 const product = (req, res) => {
   const id = req.params["id"];
-  const query = "select * from products where itemId = ?";
-  try {
-    conn.query(query, [id], (err, result) => {
-        if (result.length === 0) return res.status(404).json({ message: "Product not found" });
-      if (err) return res.status(500).json({ message: err.message });
-      return res.status(200).json({ result: result });
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+  const query =
+    "SELECT * FROM products WHERE itemId = ?";
+
+  conn.query(query, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ message: err.message });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    return res.status(200).json({ product: result[0] });
+  });
 };
 
 module.exports = product;

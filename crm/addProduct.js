@@ -22,10 +22,7 @@ var conn = mysql.createConnection({
   database: process.env.DATABASE,
 });
 
-
-
 const addProduct = (req, res) => {
-    
   const {
     sex,
     category,
@@ -57,7 +54,6 @@ const addProduct = (req, res) => {
     ],
     (error) => {
       if (error) {
-        
         return res
           .status(500)
           .json({ message: "An error occurred. Please try again later." });
