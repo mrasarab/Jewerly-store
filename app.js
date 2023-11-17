@@ -9,15 +9,15 @@ const multer = require("multer");
 
 
 const cookieParser = require("cookie-parser");
-const SignUp = require("./db/signUp");
-const login = require("./db/login");
-const adminLogin = require("./db/adminLogin");
-const addProduct = require("./db/addProduct");
+const SignUp = require("./user/signUp");
+const login = require("./user/login");
+const adminLogin = require("./crm/adminLogin");
+const addProduct = require("./crm/addProduct");
 const { error } = require("console");
-const addAdressToUser = require("./db/userAdress");
-const updateAddressOfUser = require("./db/userModifyAddress");
-const addProductToUserBasket = require("./db/userAddToBasket");
-const { verifyAdminToken } = require("./db/tokenVerify");
+const addAdressToUser = require("./user/userAdress");
+const updateAddressOfUser = require("./user/userModifyAddress");
+const addProductToUserBasket = require("./shopping-cart/userAddToBasket");
+const { verifyAdminToken } = require("./security/tokenVerify");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -62,7 +62,7 @@ app.post("/updateAddressOfUser", (req, res) => {
 
 /////////////////////////////////////////
 
-const data = require("./db/showProduct");
+const data = require("./product/showProduct");
 app.post("/showproducts", (req, res) => {
   data(req, res);
 });
@@ -72,7 +72,7 @@ app.post("/addProductToUserBasket", (req,res) => {
 });
 
 
-const product = require("./db/product");
+const product = require("./product/product");
 app.post("/product/:id", (req, res) => {
   product(req, res);
 });

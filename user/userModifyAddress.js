@@ -10,7 +10,7 @@ const U = process.env.U;
 const PASSWORD = process.env.PASSWORD;
 const DATABASE = process.env.DATABASE;
 
-const { verifyUserTokenWithEmailReturn } = require("./tokenVerify");
+const { verifyUserTokenWithEmailReturn } = require("../security/tokenVerify");
 
 var conn = mysql.createConnection({
   host: HOST,

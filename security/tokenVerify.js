@@ -6,8 +6,7 @@ const mysql = require("mysql2");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 dotenv.config();
-const fs = require("fs");
-const multer = require("multer");
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
