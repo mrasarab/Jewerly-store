@@ -7,6 +7,7 @@ var validator = require("validator");
 const jwt = require("jsonwebtoken");
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const checkBlackLetter = require("../security/checkStrings");
 
 const HOST = process.env.HOST;
 const U = process.env.U;
@@ -25,7 +26,7 @@ var conn = mysql.createConnection({
 
 const NewUser = (req, res) => {
   const { email, username, password } = req.body;
-
+  if (checkBlackLetter(req.body)) return res.status(400).json({ message: "You cannot use these letters in email and username and password : " +  checkBlackLetter(req.body)});
   if (
     validator.isEmpty(email) ||
     validator.isEmpty(username) ||

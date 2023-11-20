@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const dotenv = require("dotenv");
 const validator = require("validator");
 dotenv.config();
-
+const checkBlackLetter = require("../security/checkStrings");
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
@@ -18,7 +18,9 @@ var conn = mysql.createConnection({
 
 const CheckUser = (req, res) => {
   const { email, password } = req.body;
+  const allLetters = email + password;
   // check the inputs
+  if (checkBlackLetter(allLetters)) return res.status(400).json({ message: "You cannot use these letters in username and password : " +  checkBlackLetter(allLetters)});
   if (validator.isEmpty(email) || validator.isEmpty(password)) {
     res.status(400).json({ message: "fields are empty" });
   }

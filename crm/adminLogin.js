@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
-
-const dotenv = require("dotenv");
 const validator = require("validator");
+const checkBlackLetter = require("../security/checkStrings");
+const dotenv = require("dotenv");
+
 dotenv.config();
 
 const ADMIN_ACCESS_TOKEN_SECRET = process.env.ADMIN_ACCESS_TOKEN_SECRET;
@@ -12,6 +13,9 @@ const ADMIN_UNIQUE_PASSWORD = process.env.ADMIN_UNIQUE_PASSWORD;
 
 const CheckAdmin = (req, res) => {
   const { username, password } = req.body;
+  if (checkBlackLetter(username)) return res.status(400).json({ message: "You cannot use these letters in username : " +  checkBlackLetter(username)});
+  if (checkBlackLetter(password)) return res.status(400).json({ message: "You cannot use these letters in password : " +  checkBlackLetter(password)});
+
   // check the inputs
   if (validator.isEmpty(username) || validator.isEmpty(password)) {
     res.status(400).json({ message: "fields are empty" });

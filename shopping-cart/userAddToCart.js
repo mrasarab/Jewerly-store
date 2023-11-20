@@ -2,7 +2,7 @@ const mysql = require("mysql2");
 const dotenv = require("dotenv");
 dotenv.config();
 var validator = require("validator");
-
+const checkBlackLetter = require("../security/checkStrings");
 const HOST = process.env.HOST;
 const U = process.env.U;
 const PASSWORD = process.env.PASSWORD;
@@ -23,6 +23,9 @@ const addProductToUserCart = async (req, res) => {
 
     const stringItemId = req.params["id"];
     const stringQuantity = req.params["quantity"];
+    
+    if (checkBlackLetter(stringItemId)) return res.status(400).json({ message: "You cannot use these letters in ItemId : " +  checkBlackLetter(stringItemId)});
+    if (checkBlackLetter(stringQuantity)) return res.status(400).json({ message: "You cannot use these letters in Quantity : " +  checkBlackLetter(stringQuantity)});
 
     if (validator.isEmpty(stringItemId) || validator.isEmpty(stringQuantity)) {
       return res.status(400).json({ message: "itemId or quantity is null." });

@@ -6,7 +6,7 @@ const mysql = require("mysql2");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 dotenv.config();
-
+const checkBlackLetter = require("../security/checkStrings");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -21,7 +21,8 @@ var conn = mysql.createConnection({
 
 const data = (req, res) => {
   const { sex, category } = req.body;
-
+  if (checkBlackLetter(sex)) return res.status(400).json({ message: "You cannot use these letters for sex : " +  checkBlackLetter(sex)});
+  if (checkBlackLetter(category)) return res.status(400).json({ message: "You cannot use these letters for category : " +  checkBlackLetter(category)});
   if (!sex || !category) {
     return res
       .status(400)

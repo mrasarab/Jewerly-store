@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
-
+const checkBlackLetter = require("../security/checkStrings");
 var conn = mysql.createConnection({
   host: process.env.HOST,
   user: process.env.U,
@@ -23,6 +23,8 @@ var conn = mysql.createConnection({
 });
 
 const addProduct = (req, res) => {
+  
+
   const {
     sex,
     category,
@@ -34,6 +36,9 @@ const addProduct = (req, res) => {
     tags,
   } = req.body;
 
+  const allLetters = sex + category + brand + name + price + availability + deliveryTime + tags;
+  console.log(allLetters);
+  if (checkBlackLetter(allLetters)) return res.status(400).json({ message: "You cannot use these letters : " +  checkBlackLetter(allLetters)});
   var { readItemId, updateItemId } = require("../additemnum");
   var itemId = readItemId();
 

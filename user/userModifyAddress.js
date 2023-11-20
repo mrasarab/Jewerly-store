@@ -1,7 +1,7 @@
 const mysql = require("mysql2");
 const dotenv = require("dotenv");
 dotenv.config();
-
+const checkBlackLetter = require("../security/checkStrings");
 const { error } = require("console");
 
 const HOST = process.env.HOST;
@@ -67,6 +67,14 @@ const updateAddressOfUser = async (req, res) => {
 
       fields.forEach((field, index) => {
         sql_query += `${field}=?`;
+        if (checkBlackLetter(updates[field]))
+          return res
+            .status(400)
+            .json({
+              message:
+                "You cannot use these letters : " +
+                checkBlackLetter(updates[field]),
+            });
         params.push(updates[field]);
         if (index !== fields.length - 1) {
           sql_query += ", ";

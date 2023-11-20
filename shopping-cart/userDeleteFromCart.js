@@ -2,7 +2,7 @@ const mysql = require("mysql2");
 const dotenv = require("dotenv");
 dotenv.config();
 var validator = require("validator");
-
+const checkBlackLetter = require("../security/checkStrings");
 const HOST = process.env.HOST;
 const U = process.env.U;
 const PASSWORD = process.env.PASSWORD;
@@ -20,7 +20,8 @@ var conn = mysql.createConnection({
 const deleteProductFromCart = async (req, res) => {
   const email = await verifyUserTokenWithEmailReturn(req, res);
   const stringItemId = req.params["id"];
-
+  
+  if (checkBlackLetter(stringItemId)) return res.status(400).json({ message: "You cannot use these letters in ItemId : " +  checkBlackLetter(stringItemId)});
   if (validator.isEmpty(stringItemId)) {
     return res.status(400).json({ message: "itemId is null." });
   }

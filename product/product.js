@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
-
+const checkBlackLetter = require("../security/checkStrings");
 var conn = mysql.createConnection({
   host: process.env.HOST,
   user: process.env.U,
@@ -24,6 +24,8 @@ var conn = mysql.createConnection({
 
 const product = (req, res) => {
   const id = req.params["id"];
+  if (checkBlackLetter(id)) return res.status(400).json({ message: "You cannot use these letters in itemId : " +  checkBlackLetter(id)});
+
   const query =
     "SELECT * FROM products WHERE itemId = ?";
 
